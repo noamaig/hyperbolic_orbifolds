@@ -59,10 +59,10 @@ classdef OptimSolverLBFGS_NEW < handle
             obj.fun = fun;
             obj.x0 = x0;
             obj.Ab = Ab;
-            obj.m = m;
-            obj.P = P;
+            % init precond
+            obj.updatePrecond(P);
             % init lbfgs
-            obj.initLBFGS(); 
+            obj.initLBFGS(m); 
         end
         
         function report(obj,verbosity,varargin)
@@ -71,12 +71,20 @@ classdef OptimSolverLBFGS_NEW < handle
             end
         end
         
-        function initLBFGS(obj)
+        function initLBFGS(obj,m)
             assert(norm(obj.Ab.A*obj.x0-obj.Ab.b,'inf')<=obj.tol_Ab, 'x0 failed to satisfy the linear constraints!');
-            obj.x =obj.x0;
+            obj.x = obj.x0;
             obj.x_prev = inf;
-            
+            % setup memory
+            obj.updateMemory(m);    
+            % evaluate function and gradient
+            [obj.x_f, obj.x_fgrad] = obj.funEvaluateValueGrad(obj.x); 
+        end
+        
+        function updateMemory(obj,m)
+            obj.m = m;
             obj.curr_m = 0;
+            % reset memory
             obj.y_k = zeros(obj.Ab.dim_N, obj.m);
             obj.s_k = zeros(obj.Ab.dim_N, obj.m);
             obj.rao_k = zeros(1, obj.m);
@@ -84,9 +92,11 @@ classdef OptimSolverLBFGS_NEW < handle
             obj.beta_k = zeros(1, obj.m);
             % set dummy memory (for H_k initialization)
             obj.y_k(:,1) = 1;
-            obj.s_k(:,1) = 1;
-            % evaluate function and gradient
-            [obj.x_f, obj.x_fgrad] = obj.funEvaluateValueGrad(obj.x); 
+            obj.s_k(:,1) = 1;        
+        end
+        
+        function updatePrecond(obj,P)
+            obj.P = P;
         end
         
         function [z_f] = funEvaluateValue(obj,z)
