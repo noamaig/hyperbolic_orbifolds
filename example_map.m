@@ -32,6 +32,9 @@ mapper.lift(2,1);
 % barycentric mapping is just a rough estimation of the map for
 % visualization, basically sampling the mapping only on the vertices.
 % 
+
+%% Visualization of the map as a movie with linear interpolation between the 2 models.
+
 % next line is mapping all of max's vertices onto davis's mesh.
 % note: this is confusing, the "geometric" map is max->david, but the 
 % linear map of the barycentric system recieves as input the position of
@@ -39,7 +42,6 @@ mapper.lift(2,1);
 % input\output of geometric map vs. linear map is reversed. 
 V_on_david=mapper.map.barCoords{1,2}*embedder_david.M_orig.V';
 
-%% Visualization of the map as a movie with linear interpolation between the 2 models.
 
 % Here I am just rotating the two point clouds to be kind of aligned so the
 % linear interpolation will look decent. 
