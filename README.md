@@ -5,12 +5,12 @@ Matlab code implementing the [Siggraph Asia 2016 paper, "Hyperbolic Orbifold Tut
 An extension of Tutte's embedding to hyperbolic domains, namely hyperbolic orbifolds which enable seamless parameterization and mapping.
 
 
-###Example scripts:
+### Example scripts:
 - `example_embed_mesh_sphere` - map a spherical mesh to a hyperbolic orbifold.
 - `example_embed_mesh_disk` - map a disk mesh to a hyperbolic orbifold.
 - `example_map` - map meshes to one another by embedding both into the same hyperbolic orbifold.
 
-###Main classes:
+### Main classes:
 - `flattener` - the object used to compute the embedding. 
 - `mapper` - object that takes a bunch of flatteners and computes the mapping induced by them.
 
