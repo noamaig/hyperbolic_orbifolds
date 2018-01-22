@@ -3,3 +3,7 @@
 example_map2.m
 tr_reg_022.mat
 tr_reg_077.mat
+example_test_omri.m
+Icon
+*.m~
+*.asv

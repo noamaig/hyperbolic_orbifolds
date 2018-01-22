@@ -43,31 +43,46 @@ V_on_david=mapper.map.barCoords{1,2}*embedder_david.M_orig.V';
 
 % Here I am just rotating the two point clouds to be kind of aligned so the
 % linear interpolation will look decent. 
-V_on_david_t=V_on_david(:,[1 3 2]);
 V_on_max=embedder_max.M_orig.V';
-V_on_max(:,3)=-V_on_max(:,3);
+%center
+V_on_david=bsxfun(@minus,V_on_david,mean(V_on_david));
+V_on_max=bsxfun(@minus,V_on_max,mean(V_on_max));
 
+
+
+%find R minimizing |A*R-B|=|AA|+|BB|-tr(R^T*A^T*B) -> maximize tr(R^TA^TB)
+A=V_on_david'*V_on_max;
+[U,~,V]=svd(A);
+R=U*V';
+V_on_david=V_on_david*R;
+% min_a |a*A-B| -> min_a a^2*|A^2|-a*tr(A'*B)
+% 2a*|A^2|=tr(A'B);
+scale=trace(V_on_david'*V_on_max)/sum(V_on_david(:).^2);
+V_on_david=V_on_david*scale;
 %the movie with linear interpolation. Spoilers: it ends with david. 
 figure(1);
 clf;
 set(gcf,'name','linear interpolation between source and target');
 T=embedder_max.M_orig.F';
-inc=0.02;
+inc=0.05;
+t=0;
+hP=patch('faces',T,'vertices',V,'facecolor','white','edgealpha',0.3);
+axis equal
+light
+campos([101.7697   57.8614  -97.7677]);
+camup([0 1 0]);
 while(true)
-    t=t+inc;
-    if t>=1
-        t=1;
-        inc=-inc;
-    end
-    if t<=0
-        t=0;
-        inc=-inc;
-    end
-    
-    V=t*V_on_max+(1-t)*V_on_david_t;
-    clf
-    patch('faces',T,'vertices',V,'facecolor','white');
-    axis equal
-    drawnow
-    pause(0.05);
+   t=t+inc;
+   if t>=1
+       t=1;
+       inc=-inc;
+   end
+   if t<=0
+       t=0;
+       inc=-inc;
+   end
+   V=t*V_on_max+(1-t)*V_on_david;
+   hP.Vertices = V;
+   drawnow;
+   %pause(0.05);
 end
