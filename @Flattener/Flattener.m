@@ -385,28 +385,7 @@ classdef Flattener < handle
                     curInds=iinds';
                 end
                 inds=unique(inds);
-                % %                  inds=inds(ceil(rand*length(inds)));
-                %                 if isempty(inds)
-                %                     break;
-                %                 end
-                %                             cc=ceil(rand*length(inds));
-                %                             maxIndex=inds(cc);
-                
-                %                 inds=setdiff(1:length(obj.flat_V),inds);
-                
-                
-                
-                %                 [~,g]=obj.solver.objective_and_grad(x);
-                %                 g=reshape(g,2,round(length(g)/2))';
-                %                 n=sqrt(sum(g.^2,2));
-                %                 o=obj.solver.karcherPerVertex(x);
-                %                 d=n;%./o;
-                %                 d(isnan(d))=-inf;
-                
-                %                 [~,sortIndex] = sort(d,'descend');  %# Sort the values in
-                %    descending order
-                %                 maxIndex = sortIndex(1:1)  %# Get a linear index into A of the 5 largest values
-                %                 d(maxIndex)
+               
                 centroid=mean(newX(inds,:));
                 Mo=disc_mobius_translation(centroid,0);
                 M=obj.M;
@@ -439,6 +418,10 @@ classdef Flattener < handle
             end
         end
         function fixFlipsNew(obj)
+            %this function fixes any flipped tris (these shouldn't happen
+            %mathematically but may happen due to numerical errors). 
+            
+            
             tr=triangulation(obj.flat_T,obj.flat_V);
             binds=tr.freeBoundary();
             binds=unique(binds(:));
@@ -452,25 +435,34 @@ classdef Flattener < handle
                 Y=x(2:2:end);
                 newX=[X Y];
                 obj.flat_V=newX;
+                
+                %recalculate distortion
                 obj.computeDistortion(true);
+                %all verticers in flipped tris
                 inds=unique(obj.flat_T(obj.flipped,:)');
-                curInds=inds;
+                %no vertices means no flips :)
                 if isempty(inds)
                     return;
                 end
+                
+                %take the 5-ring neighbourhood of flipped vertices
+                curInds=inds;
                 for r=1:5
                     iinds=find(sum(obj.solver.adj(curInds,:)));
                     inds=[inds;iinds'];
                     curInds=iinds';
                 end
-                
+                %remove duplicates
                 inds=unique(inds);
+                %don't take boundary vertices
                 inds=setdiff(inds,binds);
                 
-                %                     for innerinter=1:20
+                %iterate over all flipped vertices
                 for i=1:length(inds)
                     ind=inds(i);
+                    %mobius trans that takes cur vertex to origin
                     Mo=disc_mobius_translation(newX(ind,:),0);
+                    %map all vertices w.r.t. to the mobius
                     tempX=Mo.map(newX);
                     w=obj.solver.Wmat(ind,:);
                     w(ind)=0;
@@ -738,16 +730,6 @@ classdef Flattener < handle
             a=sdpsettings();
             a.mosek.MSK_DPAR_MIO_MAX_TIME=600;
             solvesdp(F,h,a);
-            
-            %             % project solution
-            %             Pround = binvar(n,n,'full');
-            %             h = -trace(double(P)*Pround);
-            %             F = (ones(1,n)*Pround==ones(1,n)) + (Pround*ones(n,1)==ones(n,1)) + (Pround>=0);
-            %             solvesdp(F,h)
-            %
-            %             % output
-            %             double(Pround)
-            %             toc
             obj.cone_permutation=double(P)';
             obj.uncut_cone_inds=obj.cone_permutation*obj.uncut_cone_inds;
         end
