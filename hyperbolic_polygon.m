@@ -1,11 +1,12 @@
 function [ M,P ] = hyperbolic_polygon(  k)
+%generating the basic polygon which we use as the orbifold domain
 
-%we first treat the triangle T, which has one vertex o located at (0,0)
+%we first construct the triangle T, which has one vertex o located at (0,0)
 %with angle 2pi/2k, a vertex v with angle 2pi/2k and a vertex r with 90
-%degrees. taking this triangle and reflecting along the edge (o,e) gets us
-%the basic triangle T' we will use to construct the prefect polygon. T' has
-%vertices o,v,v' with angles 2pi/k 2pi/2k 2pi/2k appropriately. After this
-%gluing the vertex r has an angle of 180.
+%degrees. taking this triangle and reflecting along the edge (o,e) and 
+%gluing the two copiesgets us the basic triangle T' we will use to construct 
+%the prefect polygon. T' has vertices o,v,v' with angles 2pi/k 2pi/2k 2pi/2k 
+%respectively. After this gluing, the vertex r has an angle of 180.
 
 %the angles of T, according to o,v,r
 angs=[2*pi/(k*2) 2*pi/(2*k) pi/2];
