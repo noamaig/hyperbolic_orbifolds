@@ -1,6 +1,5 @@
 classdef Flattener < handle
-    %FLATTENER Summary of this class goes here
-    %   Detailed explanation goes here
+    %Main class for embedding
     
     properties
         %the optimizer

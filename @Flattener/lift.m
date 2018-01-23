@@ -10,13 +10,6 @@ if ~obj.isdisc
 else
     M={};
 end
-%        if obj.isdisc
-%             for i=1:length(obj.reflection_paths)
-%                 p=obj.reflection_paths{i};
-%                 n=obj.reflection_normals(i,:);
-%                 myV(p,:)=myV(p,:)+kron(obj.reflections_shifts(i)-myV(p,:)*n',n);
-%             end
-%         end
 
 %poincare vertices of other mesh
 orgOtherV=other.flat_V;
@@ -30,7 +23,7 @@ unmatched=1:length(orgOtherV);
 B=zeros(length(unmatched),3)-1;
 %triangle in source matching target
 Ti=zeros(length(unmatched),1)-1;
-%we already know matchin of cones
+%we already know matching of cones
 unmatched=setdiff(unmatched,other.cut_cone_inds);
 
 

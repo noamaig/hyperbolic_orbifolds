@@ -17,7 +17,7 @@ for i=1:length(Morig)
     A(i,1:4)=[Morig{i}.a Morig{i}.b Morig{i}.c Morig{i}.d];
 end
 Ms=Morig;
-for i=1length(Morig)
+for i=1:length(Morig)
     Mcur=Morig{i}.inverse();
     d=sum(abs(bsxfun(@minus,A,[Mcur.a Mcur.b Mcur.c Mcur.d])),2);
             if min(d)<1e-8
