@@ -1,6 +1,6 @@
 init
 load david_50k
-embedder=embed_mesh(V,T,inds,false);
+embedder=embed_mesh(V,T,inds,false,inds(1)==15001);
 figure;
 subplot(1,2,1);
 title('original mesh');

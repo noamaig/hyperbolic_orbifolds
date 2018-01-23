@@ -56,6 +56,7 @@ classdef Flattener < handle
         reflection_shifts_per_vertex=0;
         isdisc=false;
         cone_permutation;
+        auto_compute_distortion=false;
     end
     
     methods
@@ -322,36 +323,18 @@ classdef Flattener < handle
             
             fprintf('*** flattening: ');
             obj.klein_pseudotutte();
-            warning('will need to compute distortion some point');
-            %obj.computeDistortion();
-            %             assert(~any(obj.flipped));
-            %             assert(~any(obj.flipped));
-            %             else
             x0=obj.flat_V';
             x0=x0(:);
-            %             RealL=sparse(size(obj.L,1)*2,size(obj.L,2)*2);
-            %             RealL(1:2:end,1:2:end)=obj.L;
-            %             RealL(2:2:end,2:2:end)=obj.L;
-            %             L=RealL;
+           
             if useshahar
                 x=obj.solver.solve_bfgs_fast(x0);
             else
                 x=obj.solver.solve_bfgs(x0);
             end
-            %                         obj.solver=gd_solver(obj.L,obj.M_cut.pathPairs,obj.M,obj.cut_cone_inds,obj.P);
-            %             obj.solver.L=L;
-            %                         x=obj.solver.gd(x);
-            
-            % x=obj.solver.LM_step(x0);
             
             X=x(1:2:end);
             Y=x(2:2:end);
             newX=[X Y];
-            %                 for i=1:length(obj.M_cut.pathPairs)
-            %                     p=obj.M_cut.pathPairs{i};
-            %                     newX(p(:,2),:)=obj.M{i}.map(newX(p(:,1),:));
-            %                 end
-            
             
             obj.flat_V=newX;
             
@@ -362,8 +345,9 @@ classdef Flattener < handle
                 error('vertices outside of poincare disc');
             end
             obj.times.flatten_orbifold=toc(tid);
-       
-            obj.computeDistortion();
+            if obj.auto_compute_distortion
+                obj.computeDistortion();
+            end
             
         end
         function fixFlips(obj)
